@@ -71,7 +71,7 @@ pipeline {
             }
         }
 
-        stage('Vulerability Scan') {
+        stage('Vulerability Scan - Docker') {
             steps {
                 parallel(
                     "DependencyCheck": {
@@ -118,7 +118,18 @@ pipeline {
                 }
             }
         }
-
+/*        stage('Vulerability Scan - kubernetes') {
+            steps {
+                parallel (
+                    "OPA Conftest": {
+                       sh "sudo docker run --rm  -v \$(pwd):/project openpolicyagent/conftest test --policy k8s-security.rego DJ-ecommerce-deploy.yaml"
+                    },
+                    "Kubesec - Scan": {
+                        sh "bash kubesec-scan.sh"
+                    }
+                )
+            }
+        } */
         stage('Deploying Django E-commerce Application to Kubernetes') {
             steps {
                 withKubeConfig([credentialsId: 'kubeconfig']) {
